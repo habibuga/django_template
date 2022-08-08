@@ -19,6 +19,15 @@ def create_superuser(apps, schema_editor):
     )
 
 
+def delete_superuser(apps, schema_editor):
+    User = apps.get_model('users', 'CustomUser')
+    admin = User.objects.get(pk=1)
+    if admin.is_superuser:
+        admin.delete()
+    else:
+        raise IndexError('User with id = 1 is not an admin.')
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -26,5 +35,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_superuser)
+        migrations.RunPython(create_superuser, delete_superuser)
     ]
